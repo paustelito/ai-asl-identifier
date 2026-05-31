@@ -38,10 +38,10 @@ Ya que las imágenes, como discutimos anteriormente, tienen iluminación y fondo
 ### 1) Modelo DNN
 Como un primer acercamiento a nuestro clasificador de ASL, montamos una red nueronal densa (DNN). Este modelo es un clásico para los problemas de clasificación, ya que pueden detectar y aprender relaciones complejas y no lineales entre sets de datos.
 
-#### Arquitectura
+### Arquitectura
 Por convención, configuramos una primera capa de 128 neurones con una función de activación ReLU (una función de activación estándar) y una segunda capa de clasificación con una función de activación softmax (típica para problemas de clasificación multiclase). Ya que tenemos 28 categorías, montamos 28 neuronas de clasificación en esta última capa. Además, este modelo utiliza el optimizador Adam (igualmente estándar) y la métrica de cross-entropy loss para ajustar su aprendizaje.
 
-#### Resultados
+### Resultados
 Los resultados de este primer modelo son bastante malos. A lo largo de 5 epochs, solamente se logra un **accuracy de ~3%** tanto para los valores de train y de validación. Aunque existen varias métricas de evluación, nos enfocamos en el accuracy porque esta es la más comúnmente utilizada en investigaciones de modelos de deep learning para clasificación de símbolos ASL[^1][^2][^3][^4][^5].
 
 Este accuracy tan bajo en train y val de cajón nos indica que el modelo presenta **underfitting**. Pero analizando a mayor detalle las líneas de tendencia del accuracy y loss en el entramiento de este modelo, que notamos **presentan casi ningún cambio**, podemos identificar la razón detrás de este underfitting: el modelo simplemente no está aprendiendo los datos.
@@ -58,10 +58,10 @@ Un rendimiento así de bajo con un modelo así de simple nos indica que el probl
 ### 2) Modelo CNN
 Revisando la literatura existente sobre modelos desarrollados para la clasificación ASL, notamos que una gran cantidad están basadas en las redes neuronales convolutivas (CNN)[^1][^2][^4][^5]. Esto no es sorprendente, ya que las CNNs son justamente de las arquitecturas más comunes para la clasificación de imágenes, ya que están diseñadas para manejar datos estructurados que se procesan en capas. En la literatura, es común que distintos enfoques realicen modificaciones a un CNN base (resultando en modelos conocidos como Custom Convolutional Neuronal Networks o CCNNs), como agregar capas convolucionales o de pooling[^1][^5] y utilizar una estructura siamesa para calcular similitud entre embeddings de cada símbolo[^4], pero quise empezar con un baseline comparativo del efecto que tiene agregar una capa convolutiva comparado con mi modelo DNN antes de empezar a realizar refinamientos. Esto, para primero tener un modelo fiable sobre el que se pueda diagnosticar problemas específicos con el dataset en vez de que simplemente sobrepasa las capacidades del modelo. Por eso, esta siguiente iteración utiliza un CNN "vainilla" con una configuración estándar.
 
-#### Arquitectura
+### Arquitectura
 Para crear este CNN inicial, agregamos una capa convolutiva de 10 filtros (estándar y simple) a nuestro modelo DNN. También aumentamos al doble las neuronas de nuestra primera capa densa (subiendo a 256 en vez de 128) por convención. El resto de la configuración es igual a la del modelo anterior. Esto, para comprobar nuestra teoría que el problema más importante de nuestro primer modelo es que la arquitectura era demasiado simple.
 
-#### Resultados generales
+### Resultados generales
 Evaluando los resultados de este modelo, confirmamos que efectivamente montar un modelo adecuadamente complejo para el problema tiene una mejora significativa en el rendimiento. A lo largo de los mismos 5 epochs que el modelo anterior, se logra llegar hasta un **accuracy de ~87% en train** y un **accuracy de ~82% en val**. También se reduce consistentemente el loss a lo largo de los epochs, demostrando que el modelo está aprendiendo y es capaz de ajustarse a los datos, aunque es notable que para val, subió en el último epoch, indicando un posible problema con el ajuste de los datos cuando el modelo interactúa con datos con los que no entrenó.
 
 <p align="center">
@@ -81,7 +81,7 @@ Ya que nuestros resultados ya son fiables (>70% accuracy), procedemos con nuestr
   <i>Fig 4. Gráficas de accuracy / loss para train (izquierda) y val (derecha) del modelo CNN.</i>
 </p>
 
-#### Resultados por categoría
+### Resultados por categoría
 Aunque el modelo tiene un buen rendimiento, para identificar áreas de mejora y refinamiento para la siguiente iteración revisamos más a detalle cómo se comporta con cada categoría. Esto nos permitirá identificar en qué se está equivocando el modelo y, por ende, qué estrategias utilizar.
 
 Analizando el valor de accuracy por cada categoría, notamos cuatro símbolos con valores alarmantes: **R, U, W** y **X**. Los símbolos **T** y **Y** también se encuentran por debajo del promedio, así que igual requieren más atención. Ya que el dataset está balanceado, esto nos indica que nuestro modelo no aprendió estos símbolos por algo en nuestra configuración del modelo.
