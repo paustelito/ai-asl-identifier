@@ -8,19 +8,21 @@ Para este proyecto, utilizamos el dataset [American Sign Language](https://www.k
 
 Este dataset incluye **165,782 fotografías RBG** (a color) de todas las símbolos del alfabeto del lenguaje de señas americano. Viene pre-dividido en conjuntos de test y train con **28 categorías** en cada subconjunto de datos. En train, tenemos fotografías etiquetadas para cada signo con la misma mano y el mismo fondo pero variaciones en la posición de la mano y la cercanía de la mano a la cámara.
 
-<figure>
+<p align="center">
   <img src="images/base_images.png" alt="Ejemplos de imágenes del dataset">
-  <figcaption style="text-align: center;"><i>Fig 1. Ejemplos de imágenes de train para la letra A.</i></figcaption>
-</figure>
+  <br>
+  <i>Fig 1. Ejemplos de imágenes de train para la letra A.</i>
+</p>
 
 La cantidad de imágenes por letra varía, con un mínimo de 4,542 fotos y un máximo de 5,996 fotos. Por eso, podemos concluir que el dataset viene **balanceado**, ya que pocas categorías tienen diferencias mínimas en su cantidad de imágenes comparadas con las otras.
 
 Es importante mencionar que en la carpeta test tenemos fotografías con la misma mano y fondo que train, pero todos los símbolos solamente tienen **4 fotos**, que representa menos del 1% del conjunto de imágenes para cada símbolo. Además, todas las fotos de test para cada letra tienen la misma cercanía a la cámara y son esencialmente iguales. Esto es a diferencia de las imágenes de train, que tienen variedad en sus posiciones y distancia a la cámara.
 
-<figure>
+<p align="center">
   <img src="images/test_images.png" alt="Ejemplo de imágenes del dataset">
-  <figcaption style="text-align: center;"><i>Fig 2. Las cuatro imágenes de test para la letra A.</i></figcaption>
-</figure>
+  <br>
+  <i>Fig 2. Las cuatro imágenes de test para la letra A.</i>
+</p>
 
 ### Split de datos
 Considerando la disparidad en cantidad y variaciones en los conjuntos pre-establecidos de test y train, definimos realizar nuestro propio split aleatorio entre train y test para el propósito de este proyecto, principalmente para mejorar la cantidad y calidad de nuestras imágenes de test. Además, agregamos una división para tener datos de validación.
@@ -45,11 +47,10 @@ Los resultados de este primer modelo son bastante malos. A lo largo de 5 epochs,
 Este accuracy tan bajo en train y val de cajón nos indica que el modelo presenta **underfitting**. Pero analizando a mayor detalle las líneas de tendencia del accuracy y loss en el entramiento de este modelo, que notamos **presentan casi ningún cambio**, podemos identificar la razón detrás de este underfitting: el modelo simplemente no está aprendiendo los datos.
 
 <p align="center">
-    <figure>
-        <img src="images/dnn_train.png" alt="Gráfica de accuracy / loss para train en DNN" width="49%">
-        <img src="images/dnn_val.png" alt="Gráfica de accuracy / loss para val en DNN" width="49%">
-    </figure>
-    <figcaption style="text-align: center;"><i>Fig 3. Gráficas de accuracy / loss para train (izquierda) y val (derecha) del modelo DNN.</i></figcaption>
+  <img src="images/dnn_train.png" alt="Gráfica de accuracy / loss para train en DNN" width="49%">
+  <img src="images/dnn_val.png" alt="Gráfica de accuracy / loss para val en DNN" width="49%">
+  <br>
+  <i>Fig 3. Gráficas de accuracy / loss para train (izquierda) y val (derecha) del modelo DNN.</i>
 </p>
 
 Un rendimiento así de bajo con un modelo así de simple nos indica que el problema principal es que la arquitectura es demasiado simple para el problema que queremos resolver. Por eso, para nuestra siguiente iteración definimos utilizar una arquitectura más robusta, esperando que esto mejore nuestro accuracy.
@@ -64,31 +65,32 @@ Para crear este CNN inicial, agregamos una capa convolutiva de 10 filtros (está
 Evaluando los resultados de este modelo, confirmamos que efectivamente montar un modelo adecuadamente complejo para el problema tiene una mejora significativa en el rendimiento. A lo largo de los mismos 5 epochs que el modelo anterior, se logra llegar hasta un **accuracy de ~87% en train** y un **accuracy de ~82% en val**. También se reduce consistentemente el loss a lo largo de los epochs, demostrando que el modelo está aprendiendo y es capaz de ajustarse a los datos, aunque es notable que para val, subió en el último epoch, indicando un posible problema con el ajuste de los datos cuando el modelo interactúa con datos con los que no entrenó.
 
 <p align="center">
-    <figure>
-        <img src="images/cnn_train.png" alt="Gráfica de accuracy / loss para train en CNN" width="49%">
-        <img src="images/cnn_val.png" alt="Gráfica de accuracy / loss para val en CNN" width="49%">
-    </figure>
-    <figcaption style="text-align: center;"><i>Fig 4. Gráficas de accuracy / loss para train (izquierda) y val (derecha) del modelo CNN.</i></figcaption>
+  <img src="images/dnn_train.png" alt="Gráfica de accuracy / loss para train en DNN" width="49%">
+  <img src="images/dnn_val.png" alt="Gráfica de accuracy / loss para val en DNN" width="49%">
+  <br>
+  <i>Fig 4. Gráficas de accuracy / loss para train (izquierda) y val (derecha) del modelo CNN.</i>
 </p>
 
 Es importante resaltar que, aunque los valores en general mejoraron bastante, los valores de accuracy de train y val no son tan cercanos y el accuracy de train es mejor (0.8728 vs 0.8256 respectivamente). Esto es una señal que seguimos teniendo un **underfitting** en el modelo, aunque es mucho menor que antes.
 
 Ya que nuestros resultados ya son fiables (>70% accuracy), procedemos con nuestra primera evaluación del modelo con los datos de test. Con este set de datos, el modelo logra un **accuracy de ~82%**. Es interesante notar que este valor es muy parecido al accuracy de val (0.8233 de test vs 0.8256 de val), lo cual nos indica que val está sirviendo como una primera prueba realista del rendimiento del modelo.
 
-<figure>
+<p align="center">
   <img src="images/test_cnn.png" alt="Comparación imágenes vs predicciones">
-  <figcaption style="text-align: center;"><i>Fig 5. Comparativas de imágenes vs sus predicciones (test).</i></figcaption>
-</figure>
+  <br>
+  <i>Fig 4. Gráficas de accuracy / loss para train (izquierda) y val (derecha) del modelo CNN.</i>
+</p>
 
 #### Resultados por categoría
 Aunque el modelo tiene un buen rendimiento, para identificar áreas de mejora y refinamiento para la siguiente iteración revisamos más a detalle cómo se comporta con cada categoría. Esto nos permitirá identificar en qué se está equivocando el modelo y, por ende, qué estrategias utilizar.
 
 Analizando el valor de accuracy por cada categoría, notamos cuatro símbolos con valores alarmantes: **R, U, W** y **X**. Los símbolos **T** y **Y** también se encuentran por debajo del promedio, así que igual requieren más atención. Ya que el dataset está balanceado, esto nos indica que nuestro modelo no aprendió estos símbolos por algo en nuestra configuración del modelo.
 
-<figure>
+<p align="center">
   <img src="images/acc_test.png" alt="Accuracy por categoría del CNN">
-  <figcaption style="text-align: center;"><i>Fig 6. Accuracy por categoría del CNN (test).</i></figcaption>
-</figure>
+  <br>
+  <i>Fig 6. Accuracy por categoría del CNN (test).</i>
+</p>
 
 Para entender mejor cuáles son los problemas específicos de estos símbolos, revisamos el precisión, recall y F1 de cada categoría. Aunque la literatura solamente considera el accuracy como métrica de evaluación, estas métricas nos dan más información sobre cómo el modelo está generando predicciones para cada categoría.
 
@@ -106,10 +108,10 @@ Revisando a mayor detalle, encontramos que:
 
 Para comprender cómo se están asignando predicciones erróneas en los casos de bajo recall, agregamos una Confusion Matrix como otra métrica[^3]. Esta matriz nos permite visualizar, para cada categoría, cómo se distribuyen las predicciones comparadas con las otras categorías, que es justamente lo que queremos saber.
 
-<figure>
+<p align="center">
   <img src="images/cm_cnn.png" alt="Confusion Matrix del CNN">
-  <figcaption style="text-align: center;"><i>Fig 7. Confusion Matrix del CNN.</i></figcaption>
-</figure>
+  <i>Fig 7. Confusion Matrix del CNN.</i>
+</p>
 
 Con esta matriz, identificamos los siguientes patrones importantes:
 * **R** se confunde principalmente por **V**.
