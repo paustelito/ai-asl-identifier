@@ -205,9 +205,8 @@ Para facilidad de comparación, presentamos las mejoras entre los dos modelos de
 | Precisión más baja       | 0.25 (V)     | 0.83 (V)   |
 | Recall más bajo          | 0.01 (W)     | 0.85 (X)   |
 | Diagnóstico              | Underfitting | Fitting    |
-<p align="center">
-  <i>Fig 12. Tabla comparativa de resultados CNN vs Custom CNN.</i>
-</p>
+<i>Fig 12. Tabla comparativa de resultados CNN vs Custom CNN.</i>
+
 
 A este punto, podemos concluir que ya tenemos un modelo estable y confiable para la resolución del problema, aunque aún presenta áreas de oportunidad para refinamiento a través de sus hiper parámetros.
 
