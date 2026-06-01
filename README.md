@@ -65,8 +65,8 @@ Para crear este CNN inicial, agregamos una capa convolutiva de 10 filtros (está
 Evaluando los resultados de este modelo, confirmamos que efectivamente montar un modelo adecuadamente complejo para el problema tiene una mejora significativa en el rendimiento. A lo largo de los mismos 5 epochs que el modelo anterior, se logra llegar hasta un **accuracy de ~87% en train** y un **accuracy de ~82% en val**. También se reduce consistentemente el loss a lo largo de los epochs, demostrando que el modelo está aprendiendo y es capaz de ajustarse a los datos, aunque es notable que para val, subió en el último epoch, indicando un posible problema con el ajuste de los datos cuando el modelo interactúa con datos con los que no entrenó.
 
 <p align="center">
-  <img src="images/dnn_train.png" alt="Gráfica de accuracy / loss para train en DNN" width="49%">
-  <img src="images/dnn_val.png" alt="Gráfica de accuracy / loss para val en DNN" width="49%">
+  <img src="images/cnn_train.png" alt="Gráfica de accuracy / loss para train en DNN" width="49%">
+  <img src="images/cnn_val.png" alt="Gráfica de accuracy / loss para val en DNN" width="49%">
   <br>
   <i>Fig 4. Gráficas de accuracy / loss para train (izquierda) y val (derecha) del modelo CNN.</i>
 </p>
@@ -78,7 +78,7 @@ Ya que nuestros resultados ya son fiables (>70% accuracy), procedemos con nuestr
 <p align="center">
   <img src="images/test_cnn.png" alt="Comparación imágenes vs predicciones">
   <br>
-  <i>Fig 4. Gráficas de accuracy / loss para train (izquierda) y val (derecha) del modelo CNN.</i>
+  <i>Fig 5. Resultados del primer batch de test del CNN.</i>
 </p>
 
 ### Resultados por categoría
@@ -124,6 +124,92 @@ Con esta matriz, identificamos los siguientes patrones importantes:
 En otras palabras, el modelo parece no haber aprendido correctamente principalmente las categorías **S** y **V**, ya que son las dos categorías que más predice cuando no identifica un símbolo.
 
 Para nuestra siguiente iteración, vamos a ajustar los hiper parámetros de nuestro CNN para reducir el **underfitting** que seguimos teniendo, enfocados principalmente en el conjunto de símbolos que identificamos le está costando más al modelo.
+
+### 3) Custom CNN
+Considerando que el modelo CNN principalmente se ve afectado porque tiene ciertos símbolos que presentan una confusión constante, el cambio que tendrá un mayor impacto es agregar una segunda capa convolutiva que distingue específicamente estas categorías[^1]. Además, agregamos capas de MaxPooling 2D que reducen el tamaño del embedding, extrayendo el promedio de los features representativos[^2]. Finalmente, aplicamos el doble de epochs para darle al modelo una mayor cantidad de oportunidades de corregirse durante su aprendizaje. Aunque la literatura por lo general entrena con 30 o más epochs[^1][^4], por limitaciones de hardware y porque 5 epochs al momento han dado buenos resultados, nos quedamos con **10 epochs** para este modelo.
+
+### Arquitectura
+Para crear este CNN más poderoso, aumentamos el número de capas de las capas convolutiva de 10 filtros a 32 filtros[^1][^2]. Después, agregamos nuestra primera capa de MaxPooling 2x2. Repetimos estas combinación de capa convolutiva y capa de poolings. El resultado, que ha reducido la imagen a 14x14, se vectoriza para pasar por dos capas densas. La primera tiene 128 neuronas, la segunda 96. Reducimos el número de neuronas de ambas capas porque, para este punto, hemos estado comprimiendo el embedding, por lo que ya no se requiere tanto poder de procesamiento en estas últimas etapas. Finalmente, se clasifica con las 28 neuronas para las 28 categorías.
+
+### Resultados generales
+Evaluando los resultados de este modelo, confirmamos que los cambios que realizamos de nuevo tuvieron una mejora en el rendimiento. A lo largo de 10 epochs, se logra llegar hasta un **accuracy de ~96% en train** y un **accuracy de ~97% en val**. También se reduce consistentemente el loss a lo largo de los epochs con un solo incremento durante el penúltimo epoch menor que en el modelo anterior.
+
+<p align="center">
+  <img src="images/ccnn_train.png" alt="Gráfica de accuracy / loss para train en Custom CNN" width="49%">
+  <img src="images/ccnn_val.png" alt="Gráfica de accuracy / loss para val en Custom CNN" width="49%">
+  <br>
+  <i>Fig 8. Gráficas de accuracy / loss para train (izquierda) y val (derecha) del modelo Custom Custom CNN.</i>
+</p>
+
+Es importante resaltar que los valores de accuracy de train y val son muy parecidos y el accuracy de val es ligeramente mejor (0.9650 vs 0.9733 respectivamente). Esto es una buena señal que tenemos un **fitting** adecuado de los datos, pero no se puede confirmar hasta ver los resultados de test.
+
+Por eso, procedemos con la evaluación del modelo con los datos de test. Con este set de datos, el modelo logra un **accuracy de ~97%**. Es interesante notar que este valor es muy parecido al accuracy de val (0.9715 de test vs 0.9733 de val). Con esto, podemos confirmar que este modelo tiene un **fitting** de los datos.
+
+<p align="center">
+  <img src="images/test_ccnn.png" alt="Comparación imágenes vs predicciones Custom CNN">
+  <br>
+  <i>Fig 9. Resultados del primer batch de test del Custom CNN.</i>
+</p>
+
+### Resultados por categoría
+Para poder visualizar cómo mejoró el modelo con estos cambios, realizamos las mismas comparaciones que el modelo anterior sobre su rendimiento en cada categoría.
+
+Analizando el valor de accuracy, notamos que ha mejora significativamente el accuracy de todas las categorías, especialmente las cuatro que representaban nuestro mayor reto, aunque siguen siendo de las letras con valores de accuracy más bajos. Es notable que el promedio subió de 0.82 a 0.97, en gran parte porque lo existen outliers tan bajos y el accuracy menor de todos es el de **X** con ~0.85.
+
+<p align="center">
+  <img src="images/ccnn_acc_test.png" alt="Accuracy por categoría del Custom CNN">
+  <br>
+  <i>Fig 10. Accuracy por categoría del Custom CNN (test).</i>
+</p>
+
+Para asegurar que las predicciones han mejorado en su calidad, revisamos el precisión, recall y F1 score.
+
+Aquí de nuevo vemos mejoras importantes. El F1 score más bajo es el de **V**, que subió de 0.40 en el modelo anterior a 0.90 en este modelo. También es notable que nuestro recall y precisión en general se nivelaron y en promedio son equivalentes. Esto nos indica, como veremos más adelante, que nuestra estrategia mejoró bastante el recall a lo largo de todo el dataset.
+
+Revisando a mayor detalle, encontramos que:
+
+* **R** tiene una precisión de 0.96 y un recall de 0.89. Mejoró bastante su habilidad de encontrar este símbolo.
+* **S** tiene una precisión de 0.85 y un recall de 0.98. Es más preciso al predecir este símbolo.
+* **U** tiene una precisión de 0.89 y un recall de 0.93. Aunque bajó su precisión, que antes era 1, subió importantemente su recall.
+* **V** tiene una precisión de 0.83 y un recall de 0.99. Este es el símbolo con la precisión más baja del dataset.
+* **W** tiene una precisión de 0.98 y un recall de 0.89. Este símbolo es el que más mejoró.
+* **X** tiene una precisión de 0.99 y un recall de 0.85. La precisión mejoró ligeramente junto con un aumento importante en el recall.
+* **Y** tiene una precisión de 1 y un recall de 0.99. El modelo sigue siempre prediciendo este símbolo correctamente, pero ahora también casi siempre lo encuentra.
+
+También revisamos el efecto que estas mejoras tuvieron en la Confusion Matrix. Esperamos ver que, al aumentar el recall en todas las letras que antes causaban problemas, que la matriz estará más balanceada.
+
+<p align="center">
+  <img src="images/cm_ccnn.png" alt="Confusion Matrix del Custom CNN">
+  <i>Fig 11. Confusion Matrix del Custom CNN.</i>
+</p>
+
+En efecto, identificamos los siguientes cambios:
+* **R** se confunde principalmente por **U** y **V**, pero se redujo mucho la confusión.
+* **T** ya casi no presenta confusiones.
+* **U** se confunde principalmente por **V**, pero se redujo mucho la confusión.
+* **W** se confunde principalmente por **V**,  pero se redujo mucho la confusión.
+* **X** se confunde principalmente por **S**. Ya no se confunde por V.
+* **Y** ya casi no presenta confusiones.
+
+En otras palabras, el modelo ya aprendió correctamente todas las categorías, aunque sigue teniendo confusiones, aunque mucho menores, con **S** y **V**.
+
+### Tabla comparativa CNN vs Custom CNN
+Para facilidad de comparación, presentamos las mejoras entre los dos modelos de manera resumida:
+
+|                          | CNN          | Custom CNN |
+| ------------------------ | ------------ | ---------- |
+| Accuracy (train)         | 0.8728       | 0.9650     |
+| Accuracy (val)           | 0.8256       | 0.9733     |
+| Accuracy (test)          | 0.8233       | 0.9715     |
+| Accuracy (avg / símbolo) | 0.82         | 0.97       |
+| Precisión más baja       | 0.25 (V)     | 0.83 (V)   |
+| Recall más bajo          | 0.01 (W)     | 0.85 (X)   |
+| Diagnóstico              | Underfitting | Fitting    |
+
+
+<i>Fig 12. Tabla comparativa de resultados CNN vs Custom CNN.</i>
+
+A este punto, podemos concluir que ya tenemos un modelo estable y confiable para la resolución del problema, aunque aún presenta áreas de oportunidad para refinamiento a través de sus hiper parámetros.
 
 ## Correcciones
 * Se agregó la documentación del preprocesado de datos al README.
