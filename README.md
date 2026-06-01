@@ -138,7 +138,7 @@ Evaluando los resultados de este modelo, confirmamos que los cambios que realiza
   <img src="images/ccnn_train.png" alt="Gráfica de accuracy / loss para train en Custom CNN" width="49%">
   <img src="images/ccnn_val.png" alt="Gráfica de accuracy / loss para val en Custom CNN" width="49%">
   <br>
-  <i>Fig 8. Gráficas de accuracy / loss para train (izquierda) y val (derecha) del modelo Custom Custom CNN.</i>
+  <i>Fig 8. Gráficas de accuracy / loss para train (izquierda) y val (derecha) del modelo Custom CNN.</i>
 </p>
 
 Es importante resaltar que los valores de accuracy de train y val son muy parecidos y el accuracy de val es ligeramente mejor (0.9650 vs 0.9733 respectivamente). Esto es una buena señal que tenemos un **fitting** adecuado de los datos, pero no se puede confirmar hasta ver los resultados de test.
