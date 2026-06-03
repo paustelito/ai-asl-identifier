@@ -214,6 +214,7 @@ A este punto, podemos concluir que ya tenemos un modelo estable y confiable para
 ## Correcciones
 * Se agregó la documentación del preprocesado de datos al README.
 * Se agregó la funcionalidad de guardar los datos preprocesados en un archivo zip para cargar de Google Drive en futuras iteraciones.
+* Se ajustaron las gráficas de accuracy / loss para emparejar ejes y / facilitar interpretación.
 
 [^1]: P. Moon, G. Yenurkar, V. O. Nyangaresi, A. Raut, N. Dapkekar, J. Rathod, and P. Dabare, "An improved custom convolutional neural network based hand sign recognition using machine learning algorithm," *Engineering Reports*, vol. 6 no. 10, Feb. 2024. doi: 10.1002/eng2.12878. [Online]. Available: https://onlinelibrary.wiley.com/doi/epdf/10.1002/eng2.12878?getft_integrator=scopus&src=getftr.
 ‌
