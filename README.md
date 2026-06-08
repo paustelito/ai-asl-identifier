@@ -334,7 +334,7 @@ Este modelo genera predicciones correctas para aproximadamente un tercio de las 
 
 ### Tabla comparativa resultados con datos reales
 
-Para facilitar la comparación de los modelos con datos reales, presentamos sus resultados de manera resumida. Sumamos un punto si la predicción del modelo es correcta (:white_check_mark:), 0.5 puntos si la segunda predicción es correcta y 0.25 puntos si la tercera predicción es la correcta (:grey_exclamation:). No se suman puntos si las primeras tres predicciones son incorrectas (:x:).
+Para facilitar la comparación de los modelos con datos reales, presentamos sus resultados de manera resumida. Sumamos un punto si la predicción del modelo es correcta ( :white_check_mark: ), 0.5 puntos si la segunda predicción es correcta y 0.25 puntos si la tercera predicción es la correcta ( :grey_exclamation: ). No se suman puntos si las primeras tres predicciones son incorrectas ( :x: ).
 
 |               | Custom CNN            | Grayscale             |
 | --------------| ----------------------| ----------------------|
