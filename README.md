@@ -348,7 +348,7 @@ Para facilitar la comparación de los modelos con datos reales, presentamos sus 
 | F             | :white_check_mark: | :x:                | 
 | **Aciertos**  | **4.5**               | **2.75**              |
 
-<i>Fig . Tabla comparativa de resultados con datos reales de los modelos.</i>
+<i>Fig 19. Tabla comparativa de resultados con datos reales de los modelos.</i>
 
 Como se puede apreciar con la tabla, la estrategia que aplicamos para mejorar la generalización del modelo no apoyan esta meta y nuestro mejor modelo sigue siendo el primero que desarrollamos. Es probable que cambiar las imágenes del entrenamiento para utilizar blanco y negro elimina información útil sútil que aportan los colores para distinguir símbolos que tienen formas generales parecidas o dependen de la posición de los dedos dentro de la figura. Aunque agrega variedad que ayuda al modelo a verse menos afectado por cambios en el fondo e iluminación, tuvo un impacto en la habilidad de modelo para distinguir matices en símbolos con formas generales parecidas.
 
